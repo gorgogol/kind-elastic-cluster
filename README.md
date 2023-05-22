@@ -1,6 +1,6 @@
 # Kind Elastic
 
-Scripts that help spin up an Elastic cluster fast, with minimum effort.
+Scripts that help spin up an Elastic cluster for experimenting with security applications, fast, with minimum effort.
 
 ## Prerequisites
 
