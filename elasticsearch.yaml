@@ -1,0 +1,138 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch
+  labels:
+    cluster.name: "elasticsearch"
+spec:
+  version: 8.6.2
+  nodeSets:
+  - name: hot
+    count: 2
+    config:  &elastisearch-config #elasticsearch config
+      node.roles: 
+        - master
+        - ingest
+        - ml
+        - transform
+        - data_hot
+        - remote_cluster_client
+      node.attr.temp: hot
+      xpack.ml.enabled: true
+      node.store.allow_mmap: false
+      xpack.monitoring.collection.enabled: true
+      xpack.monitoring.elasticsearch.collection.enabled: false
+    podTemplate:
+      spec:
+        initContainers:
+          - name: sysctl
+            securityContext:
+              privileged: true
+            command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+        containers:
+        - name: elasticsearch
+          env: 
+          - name: ES_JAVA_OPTS
+            value: -Xms1g -Xmx1g
+          resources:
+            requests:
+              memory: 2Gi
+              cpu: 0.5
+            limits:
+              memory: 2Gi
+              cpu: 2
+        nodeSelector: 
+          temp: hot
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
+  - name: warm
+    count: 2
+    config:
+      <<: *elastisearch-config #elasticsearch config
+      node.roles: 
+        - master
+        - ingest
+        - ml
+        - transform
+        - data_content
+        - data_warm
+      node.attr.temp: warm
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+    podTemplate:
+      spec:
+        initContainers:
+          - name: sysctl
+            securityContext:
+              privileged: true
+            command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+        containers:
+          - name: elasticsearch
+            env:
+            - name: ES_JAVA_OPTS
+              value: -Xms1g -Xmx1g
+            resources:
+              requests:
+                memory: 2Gi
+                cpu: 0.5
+              limits:
+                memory: 2Gi
+                cpu: 2
+        nodeSelector: 
+          temp: warm
+  - name: cold
+    count: 2
+    config:  
+      <<: *elastisearch-config #elasticsearch config
+      node.roles: 
+        - master
+        - ingest
+        - ml
+        - transform
+        - data_cold
+      node.attr.temp: cold
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+    podTemplate:
+      spec:
+        initContainers:
+          - name: sysctl
+            securityContext:
+              privileged: true
+            command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+        containers:
+          - name: elasticsearch
+            env:
+            - name: ES_JAVA_OPTS
+              value: -Xms1g -Xmx1g
+            resources:
+              requests:
+                memory: 2Gi
+                cpu: 0.5
+              limits:
+                memory: 2Gi
+                cpu: 2
+        nodeSelector: 
+          temp: warm
+
