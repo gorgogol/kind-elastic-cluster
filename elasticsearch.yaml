@@ -5,7 +5,7 @@ metadata:
   labels:
     cluster.name: "elasticsearch"
 spec:
-  version: 8.6.2
+  version: 8.10.4
   nodeSets:
   - name: hot
     count: 1
