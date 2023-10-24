@@ -1,6 +1,5 @@
-# delete cluster if it exists
 kind delete cluster --name elastic
 
-# create cluster
 kind create cluster --config kind-config.yaml --name elastic
 
+kind load docker-image docker.elastic.co/eck/eck-operator:2.9.0 --name elastic
