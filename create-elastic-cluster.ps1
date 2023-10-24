@@ -90,5 +90,5 @@ Start-Job -ScriptBlock {
 }
 
 Write-Host "----"
-Write-Host "Connect to dashboard at: `"https://localhost:8001`""
+Write-Host "Connect to dashboard at: `"https://localhost:8443`""
 Write-Host "----"
