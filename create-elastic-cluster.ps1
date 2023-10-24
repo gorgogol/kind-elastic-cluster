@@ -68,27 +68,3 @@ Write-Host "----"
 Write-Host "Connect to Fleet Server at: `"https://localhost:8220`""
 Write-Host "----"
 
-
-Write-Host "Adding Kubernetes dashboard"
-kubectl apply -f "kubernetes-dashboard.yml"
-
-kubectl patch deployment kubernetes-dashboard -n kubernetes-dashboard --type 'json' -p '[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--enable-skip-login"}]'
-
-Write-Host "Adding resource usage metrics"
-kubectl apply -f "metrics.yaml"
-
-kubectl patch deployment metrics-server -n kube-system --type 'json' -p '[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
-
-
-$TOKEN_DASHBOARD_ENCODED = kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath="{.data.token}"
-$TOKEN_DASHBOARD = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($TOKEN_DASHBOARD_ENCODED))
-
-Write-Host "Token for Kubernetes Dashboard: $TOKEN_DASHBOARD"
-
-Start-Job -ScriptBlock {
-    kubectl port-forward service/kubernetes-dashboard -n kubernetes-dashboard 8443:443
-}
-
-Write-Host "----"
-Write-Host "Connect to dashboard at: `"https://localhost:8443`""
-Write-Host "----"
