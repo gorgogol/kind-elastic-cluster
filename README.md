@@ -13,9 +13,17 @@ To run these scripts, you need the following:
 
 ## Scripts
 
+### Windows ###
+
 1. **create-kind-cluster.bat** - This script creates a Kubernetes Kind cluster using the configuration specified in the `kind-config.yaml` file.
 
 2. **create-elast-cluster.ps1** - This PowerShell script deploys an Elastic cluster on the Kubernetes cluster created by the `create-kind-cluster.bat` script. The Elastic cluster includes Kibana and a Fleet server.
+
+
+### Unix ###
+
+1. **create-kind-cluster.sh** - This script creates a Kubernetes Kind cluster using the configuration specified in the `kind-config.yaml` file.
+2. **create-elast-cluster.sh** - This PowerShell script deploys an Elastic cluster on the Kubernetes cluster created by the `create-kind-cluster.sh` script. The Elastic cluster includes Kibana and a Fleet server.
 
 ## How to use
 
